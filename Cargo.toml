@@ -1,0 +1,6 @@
+[package]
+name = "sulfide"
+version = "0.1.0"
+authors = ["hargados <hargados@tcd.ie>"]
+
+[dependencies]
