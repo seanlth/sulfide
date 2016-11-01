@@ -1,5 +1,6 @@
 #[macro_use]
 pub mod geometry;
+pub mod document;
 pub mod element;
 pub mod container;
-pub mod document;
+pub mod text;

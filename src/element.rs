@@ -1,5 +1,5 @@
 
 
 pub trait Element {
-    fn generate(&self) -> (String, String); // HTML, CSS
+    fn generate(&self, indent: String) -> (String, String); // HTML, CSS
 }

@@ -5,32 +5,44 @@ use container::Container;
 
 
 pub struct Document {
-    child: Container
+    pub root: Option<Container>
 }
 
 impl Document {
-    pub fn new(rect: Rect) -> Document {
+    pub fn new() -> Document {
         Document {
-            child: Container::new(rect)
+            root: None
         }
     }
 
+    pub fn set_root(&mut self, root: Container) {
+        self.root = Some(root);
+    }
+
+//    fn get_width
 
 }
 
 impl Element for Document {
-    fn generate(&self) -> (String, String) {
-        let mut css = "".to_string();
+    fn generate(&self, _: String) -> (String, String) {
+        let (h, c) = match &self.root {
+            &Some(ref r) => r.generate("    ".to_string()),
+            &None => ("".to_string(), "".to_string())
+        };
+        let css = c;
 
-        let mut doc = "<!DOCTYPE html>\n".to_string();
-        doc.push_str("<html>\n");
-        doc.push_str("<head>\n");
-        doc.push_str("</head>\n");
-        doc.push_str("<body>\n");
-        let (h, c) = self.child.generate();
-        doc = format!("{}{}", doc, h);
-        doc.push_str("</body>\n");
-        doc.push_str("</html>\n");
-        (doc, "".to_string())
+        let mut html = "<!DOCTYPE html>\n".to_string();
+        html.push_str("<html>\n");
+        html.push_str("  <head>\n");
+        html.push_str("    <meta content=\"text/html;charset=utf-8\" http-equiv=\"Content-Type\">\n");
+        html.push_str("    <meta content=\"utf-8\" http-equiv=\"encoding\">\n");
+        html.push_str("    <link rel=\"stylesheet\" href=\"reset.css\" type=\"text/css\">");
+        html.push_str("    <link rel=\"stylesheet\" href=\"style.css\" type=\"text/css\">\n");
+        html.push_str("  </head>\n");
+        html.push_str("  <body>\n");
+        html = format!("{}{}", html, h);
+        html.push_str("  </body>\n");
+        html.push_str("</html>\n");
+        (html, css)
     }
 }
