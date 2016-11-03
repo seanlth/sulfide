@@ -1,4 +1,6 @@
 
+use element::Element;
+
 pub enum TextType {
     Link(String), // target
     Normal
@@ -10,11 +12,11 @@ pub enum TextDecoration {
 }
 
 pub struct Text {
-    text: String,
-    font: String,
-    size: usize,
-    text_type: TextType,
-    text_decoration: TextDecoration
+    pub text: String,
+    pub font: String,
+    pub size: usize,
+    pub text_type: TextType,
+    pub text_decoration: TextDecoration
 }
 
 impl Text {
@@ -27,6 +29,12 @@ impl Text {
             text_decoration: TextDecoration::Normal
         }
     }
+}
 
-
+impl Element for Text {
+    fn generate(&self, indent: String) -> (String, String) {
+        let html = format!("{}{}", indent, self.text);
+        let css = "".to_string();
+        (html, css)
+    }
 }

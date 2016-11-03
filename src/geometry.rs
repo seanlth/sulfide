@@ -9,6 +9,7 @@ use std::ops::Neg;
 
 #[derive(Clone, PartialEq)]
 pub enum Unit {
+    None,
     Percent(f64),
     Pixel(f64),
     Calc(String),
@@ -17,6 +18,7 @@ pub enum Unit {
 impl Unit {
     pub fn to_string(&self) -> String {
         match self {
+            &Unit::None => format!(""),
             &Unit::Percent(v) => format!("{}%", v),
             &Unit::Pixel(v) => format!("{}px", v),
             &Unit::Calc(ref v) => format!("calc({})", v)
@@ -39,11 +41,18 @@ macro_rules! Clc {
     ($e:expr) => ( Unit::Calc($e));
 }
 
+#[macro_export]
+macro_rules! N {
+    () => ( Unit::None );
+}
+
 impl Add<Unit> for Unit {
     type Output = Unit;
 
     fn add(self, u: Unit) -> Unit {
         match (self, u) {
+            ( Unit::None, _) => Unit::None,
+            ( _, Unit::None ) => Unit::None,
             ( Unit::Percent(x), Unit::Percent(y) ) => Unit::Percent(x + y),
             ( Unit::Percent(x), Unit::Pixel(y) ) => Unit::Calc(format!("{}% + {}px", x, y)),
             ( Unit::Pixel(x),  Unit::Pixel(y) ) => Unit::Pixel(x + y),
@@ -62,6 +71,8 @@ impl Sub<Unit> for Unit {
 
     fn sub(self, u: Unit) -> Unit {
         match (self, u) {
+            ( Unit::None, _) => Unit::None,
+            ( _, Unit::None ) => Unit::None,
             ( Unit::Percent(x), Unit::Percent(y) ) => Unit::Percent(x - y),
             ( Unit::Percent(x), Unit::Pixel(y) ) => Unit::Calc(format!("{}% - {}px", x, y)),
             ( Unit::Pixel(x),  Unit::Pixel(y) ) => Unit::Pixel(x - y),
@@ -71,65 +82,23 @@ impl Sub<Unit> for Unit {
             ( Unit::Calc(x), Unit::Pixel(y) ) => Unit::Calc(format!("{} - {}px", x, y)),
             ( Unit::Percent(x), Unit::Calc(y) ) => Unit::Calc(format!("{}% - {}", x, y)),
             ( Unit::Pixel(x), Unit::Calc(y) ) => Unit::Calc(format!("{}px - {}", x, y)),
-        }    }
+        }
+    }
 }
 
-// impl Mul<f64> for Point {
-//     type Output = Point;
-//
-//     fn mul(self, v: f64) -> Point {
-//         Point::new(self.x * v, self.y * v)
-//     }
-// }
-//
-// impl Mul<Point> for f64 {
-//     type Output = Point;
-//
-//     fn mul(self, v: Point) -> Point {
-//         Point::new(self * v.x, self * v.y)
-//     }
-// }
-//
-// impl Div<f64> for Point {
-//     type Output = Point;
-//
-//     fn div(self, v: f64) -> Point {
-//         Point::new(self.x / v, self.y / v)
-//     }
-// }
-//
-// impl Div<Point> for Point {
-//     type Output = Point;
-//
-//     fn div(self, v: Point) -> Point {
-//         Point::new(self.x / v.x, self.y / v.y)
-//     }
-// }
-//
-// impl Neg for Point {
-//     type Output = Point;
-//
-//     fn neg(self) -> Point {
-//         Point::new(-self.x, -self.y)
-//     }
-// }
+impl Div<f64> for Unit {
+    type Output = Unit;
 
+    fn div(self, v: f64) -> Unit {
+        match self {
+            Unit::None => Unit::None,
+            Unit::Percent(x) => Unit::Percent(x / v),
+            Unit::Pixel(x) => Unit::Pixel(x / v),
+            Unit::Calc(x) => Unit::Calc(format!("({}) / {}", x, v))
+        }
+    }
+}
 
-
-// pub struct asd <f64> {
-//     pub x: f64,
-//     pub y: f64
-// }
-//
-//
-// impl<f64> asd<f64> {
-//     pub fn new() -> asd<f64> {
-//         asd {
-//             x: 1.0,
-//             y: 1.0
-//         }
-//     }
-// }
 
 #[derive(Clone, PartialEq)]
 pub struct Point {
@@ -144,78 +113,7 @@ impl Point {
             y: y
         }
     }
-
-    // pub fn print(&self) {
-    //     let x = match self.x {
-    //         Unit::Percent(v) => format!("{}%", v),
-    //         Unit::Pixel(v) => format!("{}px", v)
-    //     };
-    //     let y = match self.y {
-    //         Unit::Percent(v) => format!("{}%", v),
-    //         Unit::Pixel(v) => format!("{}px", v)
-    //     };
-    //     println!("(x: {}, y: {})", x, y);
-    // }
 }
-
-// impl Add<Point> for Point {
-//     type Output = Point;
-//
-//     fn add(self, v: Point) -> Point {
-//         Point::new(self.x + v.x, self.y + v.y)
-//     }
-// }
-//
-// impl Sub<Point> for Point {
-//     type Output = Point;
-//
-//     fn sub(self, v: Point) -> Point {
-//         Point::new(self.x - v.x, self.y - v.y)
-//     }
-// }
-//
-// impl Mul<f64> for Point {
-//     type Output = Point;
-//
-//     fn mul(self, v: f64) -> Point {
-//         Point::new(self.x * v, self.y * v)
-//     }
-// }
-//
-// impl Mul<Point> for f64 {
-//     type Output = Point;
-//
-//     fn mul(self, v: Point) -> Point {
-//         Point::new(self * v.x, self * v.y)
-//     }
-// }
-//
-// impl Div<f64> for Point {
-//     type Output = Point;
-//
-//     fn div(self, v: f64) -> Point {
-//         Point::new(self.x / v, self.y / v)
-//     }
-// }
-//
-// impl Div<Point> for Point {
-//     type Output = Point;
-//
-//     fn div(self, v: Point) -> Point {
-//         Point::new(self.x / v.x, self.y / v.y)
-//     }
-// }
-//
-// impl Neg for Point {
-//     type Output = Point;
-//
-//     fn neg(self) -> Point {
-//         Point::new(-self.x, -self.y)
-//     }
-// }
-//
-// pub const ZERO_POINT: Point = Point { x: 0.0, y: 0.0 };
-// pub const MAX_POINT: Point = Point { x: f64::MAX, y: f64::MAX };
 
 
 #[derive(Clone)]
