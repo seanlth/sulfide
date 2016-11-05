@@ -9,7 +9,7 @@ use std::ops::Neg;
 
 #[derive(Clone, PartialEq)]
 pub enum Unit {
-    None,
+    Default,
     Percent(f64),
     Pixel(f64),
     Calc(String),
@@ -18,7 +18,7 @@ pub enum Unit {
 impl Unit {
     pub fn to_string(&self) -> String {
         match self {
-            &Unit::None => format!(""),
+            &Unit::Default => format!(""),
             &Unit::Percent(v) => format!("{}%", v),
             &Unit::Pixel(v) => format!("{}px", v),
             &Unit::Calc(ref v) => format!("calc({})", v)
@@ -42,8 +42,8 @@ macro_rules! Clc {
 }
 
 #[macro_export]
-macro_rules! N {
-    () => ( Unit::None );
+macro_rules! D {
+    () => ( Unit::Default );
 }
 
 impl Add<Unit> for Unit {
@@ -51,8 +51,8 @@ impl Add<Unit> for Unit {
 
     fn add(self, u: Unit) -> Unit {
         match (self, u) {
-            ( Unit::None, _) => Unit::None,
-            ( _, Unit::None ) => Unit::None,
+            ( Unit::Default, _) => Unit::Default,
+            ( _, Unit::Default ) => Unit::Default,
             ( Unit::Percent(x), Unit::Percent(y) ) => Unit::Percent(x + y),
             ( Unit::Percent(x), Unit::Pixel(y) ) => Unit::Calc(format!("{}% + {}px", x, y)),
             ( Unit::Pixel(x),  Unit::Pixel(y) ) => Unit::Pixel(x + y),
@@ -71,8 +71,8 @@ impl Sub<Unit> for Unit {
 
     fn sub(self, u: Unit) -> Unit {
         match (self, u) {
-            ( Unit::None, _) => Unit::None,
-            ( _, Unit::None ) => Unit::None,
+            ( Unit::Default, _) => Unit::Default,
+            ( _, Unit::Default ) => Unit::Default,
             ( Unit::Percent(x), Unit::Percent(y) ) => Unit::Percent(x - y),
             ( Unit::Percent(x), Unit::Pixel(y) ) => Unit::Calc(format!("{}% - {}px", x, y)),
             ( Unit::Pixel(x),  Unit::Pixel(y) ) => Unit::Pixel(x - y),
@@ -91,7 +91,7 @@ impl Div<f64> for Unit {
 
     fn div(self, v: f64) -> Unit {
         match self {
-            Unit::None => Unit::None,
+            Unit::Default => Unit::Default,
             Unit::Percent(x) => Unit::Percent(x / v),
             Unit::Pixel(x) => Unit::Pixel(x / v),
             Unit::Calc(x) => Unit::Calc(format!("({}) / {}", x, v))

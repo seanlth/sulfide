@@ -1,6 +1,30 @@
 use geometry::{Rect, Point, Unit};
 use element::Element;
 
+
+
+
+//  ___________________________________
+// |                                   |
+// |          ________________         |
+// |         |                |        |
+// |         |                |        |
+// |         |                |        |
+// |         |                |        |
+// |         |                |        |
+// |         |________________|        |
+// |                                   |
+// |___________________________________|
+//
+
+
+enum Origin {
+    BottomLeft,
+    BottomRight,
+    TopLeft,
+    TopRight
+}
+
 static mut id_counter: usize = 0;
 
 fn get_new_id() -> usize {
@@ -68,10 +92,10 @@ impl Element for Container {
         }
         css = format!("{}    opacity: {};\n", css, self.opacity);
         css = format!("{}    background: {};\n", css, self.colour);
-        if self.rect.height != Unit::None {
+        if self.rect.height != Unit::Default {
             css = format!("{}    height: {};\n", css, self.rect.height.to_string());
         }
-        if self.rect.width != Unit::None {
+        if self.rect.width != Unit::Default {
             css = format!("{}    width: {};\n", css, self.rect.width.to_string());
         }
         if self.left == true {
@@ -86,7 +110,7 @@ impl Element for Container {
         let mut html: String = format!("{}<div class=\"div{}\">\n", indent, self.id);
 
         for child in &self.children {
-            let (h, c) = child.generate(format!("{}  ", indent));
+            let (h, c) = child.generate(format!("{}    ", indent));
             css = format!("{}{}", css, c);
             html = format!("{}{}", html, h);
         }

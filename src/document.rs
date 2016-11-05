@@ -26,22 +26,22 @@ impl Document {
 impl Element for Document {
     fn generate(&self, _: String) -> (String, String) {
         let (h, c) = match &self.root {
-            &Some(ref r) => r.generate("    ".to_string()),
+            &Some(ref r) => r.generate("        ".to_string()),
             &None => ("".to_string(), "".to_string())
         };
         let css = c;
 
         let mut html = "<!DOCTYPE html>\n".to_string();
         html.push_str("<html>\n");
-        html.push_str("  <head>\n");
-        html.push_str("    <meta content=\"text/html;charset=utf-8\" http-equiv=\"Content-Type\">\n");
-        html.push_str("    <meta content=\"utf-8\" http-equiv=\"encoding\">\n");
-        html.push_str("    <link rel=\"stylesheet\" href=\"reset.css\" type=\"text/css\">");
-        html.push_str("    <link rel=\"stylesheet\" href=\"style.css\" type=\"text/css\">\n");
-        html.push_str("  </head>\n");
-        html.push_str("  <body>\n");
+        html.push_str("    <head>\n");
+        html.push_str("        <meta content=\"text/html;charset=utf-8\" http-equiv=\"Content-Type\">\n");
+        html.push_str("        <meta content=\"utf-8\" http-equiv=\"encoding\">\n");
+        html.push_str("        <link rel=\"stylesheet\" href=\"reset.css\" type=\"text/css\">\n");
+        html.push_str("        <link rel=\"stylesheet\" href=\"style.css\" type=\"text/css\">\n");
+        html.push_str("    </head>\n");
+        html.push_str("    <body>\n");
         html = format!("{}{}", html, h);
-        html.push_str("  </body>\n");
+        html.push_str("    </body>\n");
         html.push_str("</html>\n");
         (html, css)
     }
